@@ -17,7 +17,7 @@ struct RestaurantDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading) {
-                Image(restaurant.image)
+                Image(uiImage: restaurant.image)
                     .resizable()
                     .scaledToFill()
                     .frame(minWidth: 0, maxWidth: .infinity)
@@ -68,7 +68,7 @@ struct RestaurantDetailView: View {
                         }
                     }
                 
-                Text(restaurant.description)
+                Text(restaurant.summary)
                     .padding()
                 
                 HStack(alignment: .top) {
@@ -140,6 +140,6 @@ struct RestaurantDetailView: View {
 
 #Preview {
     NavigationStack {
-        RestaurantDetailView(restaurant: Restaurant(name: "Cafe Deadend", type: "Coffee & Tea Shop", location: "Hong Kong", phone: "10086", description:"test", image: "cafedeadend", isFavorite: false, rating: .awesome))
+        RestaurantDetailView(restaurant: Restaurant(name: "Cafe Deadend", type: "Coffee & Tea Shop", location: "Hong Kong", phone: "10086", description:"test", image: UIImage(named: "cafedeadend")!, isFavorite: false, rating: .awesome))
     }
 }

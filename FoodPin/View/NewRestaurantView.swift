@@ -6,15 +6,21 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct NewRestaurantView: View {
-    @State var restuarantName = ""
-    
-    @State private var restaurantImage = UIImage(named: "newphoto")!
-    
     @State private var showPhotoOptions = false
     
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+    
+    @Bindable private var restaurantFormViewModel: RestaurantFormViewModel
+    
+    init() {
+        let viewModel = RestaurantFormViewModel()
+        viewModel.image = UIImage(named: "newphoto") ?? UIImage()
+        restaurantFormViewModel = viewModel
+    }
     
     enum PhotoSource: Identifiable {
         case photoLibrary
@@ -31,26 +37,27 @@ struct NewRestaurantView: View {
         NavigationStack {
             ScrollView {
                 VStack {
-                    Image(uiImage: restaurantImage)
+                    Image(uiImage: restaurantFormViewModel.image)
                         .resizable()
                         .scaledToFill()
                         .frame(minWidth: 0, maxWidth: .infinity)
                         .frame(height: 200)
                         .background(Color(.systemGray6))
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
                         .padding(.bottom)
                         .onTapGesture {
                             self.showPhotoOptions.toggle()
                         }
                     
-                    FormTextField(label: "NAME", placeholder: "Fill in the resaurant name", value: $restuarantName)
+                    FormTextField(label: "NAME", placeholder: "Fill in the resaurant name", value: $restaurantFormViewModel.name)
                     
-                    FormTextField(label: "Type", placeholder: "Fill in the resaurant type", value: $restuarantName)
+                    FormTextField(label: "Type", placeholder: "Fill in the resaurant type", value: $restaurantFormViewModel.type)
                     
-                    FormTextField(label: "Address", placeholder: "Fill in the resaurant address", value: $restuarantName)
+                    FormTextField(label: "Address", placeholder: "Fill in the resaurant address", value: $restaurantFormViewModel.location)
                     
-                    FormTextField(label: "phone", placeholder: "Fill in the resaurant phone", value: $restuarantName)
+                    FormTextField(label: "phone", placeholder: "Fill in the resaurant phone", value: $restaurantFormViewModel.phone)
                     
-                    FormTextView(label: "Description", value: .constant(""))
+                    FormTextView(label: "Description", value: $restaurantFormViewModel.summary)
                 }
                 .padding()
             }
@@ -66,8 +73,16 @@ struct NewRestaurantView: View {
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
-                    Text("Save")
-                        .foregroundStyle(Color("NavigationBarTitle"))
+                    Button {
+                        save()
+                        dismiss()
+                    } label: {
+                        Text("Save")
+                            .font(.headline)
+                            .foregroundStyle(Color("NavigationBarTitle"))
+                    }
+
+                    
                 }
             }
         }
@@ -82,11 +97,17 @@ struct NewRestaurantView: View {
         }
         .fullScreenCover(item: $photoSource) { source in
             switch source {
-            case .photoLibrary: ImagePicker(sourceType: .photoLibrary, selectedImage: $restaurantImage)
+            case .photoLibrary: ImagePicker(sourceType: .photoLibrary, selectedImage: $restaurantFormViewModel.image)
                     .ignoresSafeArea()
-            case .camera: ImagePicker(sourceType: .camera, selectedImage: $restaurantImage).ignoresSafeArea()
+            case .camera: ImagePicker(sourceType: .camera, selectedImage: $restaurantFormViewModel.image).ignoresSafeArea()
             }
         }
+    }
+    
+    private func save() {
+        let restaurant = Restaurant(name: restaurantFormViewModel.name, type: restaurantFormViewModel.type, location: restaurantFormViewModel.location, phone: restaurantFormViewModel.phone, description: restaurantFormViewModel.summary, image: restaurantFormViewModel.image)
+        
+        modelContext.insert(restaurant)
     }
 }
 
