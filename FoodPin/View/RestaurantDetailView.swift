@@ -24,20 +24,25 @@ struct RestaurantDetailView: View {
                     .frame(height: 445)
                     .overlay {
                         VStack {
-                            if restaurant.isFavorite {
-                                Image(systemName: "heart.fill")
-                                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topTrailing)
-                                    .padding()
-                                    .font(.system(size: 30))
-                                    .foregroundColor(.yellow)
-                                    .padding(.top, 40)
-                            } else {
-                                Image(systemName: "heart")
-                                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topTrailing)
-                                    .padding()
-                                    .font(.system(size: 30))
-                                    .foregroundColor(.white)
-                                    .padding(.top, 40)
+                            HStack {
+                                if restaurant.isFavorite {
+                                    Image(systemName: "heart.fill")
+                                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topTrailing)
+                                        .padding()
+                                        .font(.system(size: 30))
+                                        .foregroundColor(.yellow)
+                                        .padding(.top, 40)
+                                } else {
+                                    Image(systemName: "heart")
+                                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topTrailing)
+                                        .padding()
+                                        .font(.system(size: 30))
+                                        .foregroundColor(.white)
+                                        .padding(.top, 40)
+                                }
+                            }
+                            .onTapGesture {
+                                restaurant.isFavorite.toggle()
                             }
                             
                             HStack(alignment: .bottom) {
